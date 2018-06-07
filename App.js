@@ -11,38 +11,48 @@ import {
   Text,
   View,
   Image,
-  YellowBox
+  YellowBox,
 } from 'react-native';
 
-import ImagePicker from 'react-native-image-picker'
+import ImagePicker from 'react-native-image-picker';
 
 type Props = {};
 export default class App extends Component<Props> {
-
   state = {
     avatarSource: null,
-    teste: null
-  }
+    teste: null,
+  };
 
+  launchImageLibrary = async (options) => {
+    return new Promise((resolve, reject) => {
+      ImagePicker.launchImageLibrary(options, (res) => {
+        if (res.didCancel) {
+          reject('User cancelled image picker');
+        } else if (res.error) {
+          reject(res.error);
+        } else {
+          resolve(res);
+        }
+      });
+    });
+  };
   _pickImage = async () => {
     const options = {
       tite: 'Select Avatar',
       cameraType: 'back',
       takePhotoButtonTitle: 'Camera',
-      maxWidth: 120,
-      maxHeight: 120,
+      maxWidth: 300,
+      maxHeight: 300,
       storageOptions: {
         skipBackup: true,
-        path: 'images'
+        path: 'images',
       },
     };
     try {
-      await ImagePicker.launchImageLibrary(options, (response) => {
-        console.log(response);
-        this.setState({
-          avatarSource: response.uri,
-          teste: 'setou',
-        });
+      const response = await this.launchImageLibrary(options);
+      this.setState({
+        avatarSource: response.uri,
+        teste: 'setou',
       });
     } catch (e) {
       console.log(e);
@@ -56,7 +66,7 @@ export default class App extends Component<Props> {
 
         {this.state.avatarSource && (
           <Image
-          resizeMode="contain"
+            resizeMode="contain"
             source={{
               uri: this.state.avatarSource,
             }}
@@ -87,6 +97,6 @@ const styles = StyleSheet.create({
   },
   uploadAvatar: {
     width: 300,
-    height: 300
+    height: 300,
   },
 });
