@@ -23,6 +23,7 @@ export default class App extends Component<Props> {
     teste: null,
   };
 
+
   launchImageLibrary = async (options) => {
     return new Promise((resolve, reject) => {
       ImagePicker.launchImageLibrary(options, (res) => {
@@ -36,6 +37,7 @@ export default class App extends Component<Props> {
       });
     });
   };
+
   _pickImage = async () => {
     const options = {
       tite: 'Select Avatar',
@@ -62,6 +64,7 @@ export default class App extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
+
         <Text onPress={this._pickImage}>Pegar Imagem: {this.state.teste}</Text>
 
         {this.state.avatarSource && (
