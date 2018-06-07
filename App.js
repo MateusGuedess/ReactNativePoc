@@ -24,23 +24,6 @@ export default class App extends Component<Props> {
     teste: null
   }
 
-  _pickImage = async () => {
-    const options = {
-      tite: 'Select Avatar',
-      customButtons: [
-        {name: 'fb', title: 'Choose Photo from Facebook'}
-      ],
-      storageOptions: {
-        skipBackup: true,
-        path: 'images'
-      }
-    }
-
-    let result = await ImagePicker.launchImageLibrary(options, (response) => {
-      console.log('teste')
-    })
-  }
-
   quandoClick = () => { 
     const options = {
       tite: 'Select Avatar',
@@ -81,7 +64,6 @@ export default class App extends Component<Props> {
     return (
       <View style={styles.container}>
         <Text onPress={this.quandoClick}>Forte forte pra dar sorte, {this.state.teste} </Text>
-        <Text onPress={this._pickImage}>teste, {this.state.teste} </Text>
         <Image source={this.state.avatarSource} style={styles.uploadAvatar} />
       </View>
     );
