@@ -11,60 +11,71 @@ import {
   Text,
   View,
   Image,
-  YellowBox
+  YellowBox,
 } from 'react-native';
 
-import ImagePicker from 'react-native-image-picker'
+import ImagePicker from 'react-native-image-picker';
 
 type Props = {};
 export default class App extends Component<Props> {
-
   state = {
     avatarSource: null,
-    teste: null
-  }
+    teste: null,
+  };
 
-  quandoClick = () => { 
+
+  launchImageLibrary = async (options) => {
+    return new Promise((resolve, reject) => {
+      ImagePicker.launchImageLibrary(options, (res) => {
+        if (res.didCancel) {
+          reject('User cancelled image picker');
+        } else if (res.error) {
+          reject(res.error);
+        } else {
+          resolve(res);
+        }
+      });
+    });
+  };
+
+  _pickImage = async () => {
     const options = {
       tite: 'Select Avatar',
       cameraType: 'back',
       takePhotoButtonTitle: 'Camera',
-      maxWidth: 120,
-      maxHeight: 120,
+      maxWidth: 300,
+      maxHeight: 300,
       storageOptions: {
         skipBackup: true,
-        path: 'images'
-      }
+        path: 'images',
+      },
+    };
+    try {
+      const response = await this.launchImageLibrary(options);
+      this.setState({
+        avatarSource: response.uri,
+        teste: 'setou',
+      });
+    } catch (e) {
+      console.log(e);
     }
-
-    ImagePicker.showImagePicker(options, (response) => {
-      console.log('Response = ', response);
-    
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      }
-      else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      }else {
-        let source = { uri: response.uri };
-        console.log(response.uri)
-        // You can also display the image using data:
-        let source = { uri: 'data:image/jpeg;base64,' + response.data };
-        console.log(Response.data)
-        this.setState({
-          avatarSource: source
-        });
-      }
-    });
-
-
-  }
+  };
 
   render() {
     return (
       <View style={styles.container}>
-        <Text onPress={this.quandoClick}>Forte forte pra dar sorte, {this.state.teste} </Text>
-        <Image source={this.state.avatarSource} style={styles.uploadAvatar} />
+
+        <Text onPress={this._pickImage}>Pegar Imagem: {this.state.teste}</Text>
+
+        {this.state.avatarSource && (
+          <Image
+            resizeMode="contain"
+            source={{
+              uri: this.state.avatarSource,
+            }}
+            style={styles.uploadAvatar}
+          />
+        )}
       </View>
     );
   }
@@ -86,5 +97,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333333',
     marginBottom: 5,
+  },
+  uploadAvatar: {
+    width: 300,
+    height: 300,
   },
 });
