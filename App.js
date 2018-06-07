@@ -27,23 +27,6 @@ export default class App extends Component<Props> {
   _pickImage = async () => {
     const options = {
       tite: 'Select Avatar',
-      customButtons: [
-        {name: 'fb', title: 'Choose Photo from Facebook'}
-      ],
-      storageOptions: {
-        skipBackup: true,
-        path: 'images'
-      }
-    }
-
-    let result = await ImagePicker.launchImageLibrary(options, (response) => {
-      console.log('teste')
-    })
-  }
-
-  quandoClick = () => { 
-    const options = {
-      tite: 'Select Avatar',
       cameraType: 'back',
       takePhotoButtonTitle: 'Camera',
       maxWidth: 120,
@@ -51,38 +34,35 @@ export default class App extends Component<Props> {
       storageOptions: {
         skipBackup: true,
         path: 'images'
-      }
-    }
-
-    ImagePicker.showImagePicker(options, (response) => {
-      console.log('Response = ', response);
-    
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      }
-      else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      }else {
-        let source = { uri: response.uri };
-        console.log(response.uri)
-        // You can also display the image using data:
-        let source = { uri: 'data:image/jpeg;base64,' + response.data };
-        console.log(Response.data)
+      },
+    };
+    try {
+      await ImagePicker.launchImageLibrary(options, (response) => {
+        console.log(response);
         this.setState({
-          avatarSource: source
+          avatarSource: response.uri,
+          teste: 'setou',
         });
-      }
-    });
-
-
-  }
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   render() {
     return (
       <View style={styles.container}>
-        <Text onPress={this.quandoClick}>Forte forte pra dar sorte, {this.state.teste} </Text>
-        <Text onPress={this._pickImage}>teste, {this.state.teste} </Text>
-        <Image source={this.state.avatarSource} style={styles.uploadAvatar} />
+        <Text onPress={this._pickImage}>Pegar Imagem: {this.state.teste}</Text>
+
+        {this.state.avatarSource && (
+          <Image
+          resizeMode="contain"
+            source={{
+              uri: this.state.avatarSource,
+            }}
+            style={styles.uploadAvatar}
+          />
+        )}
       </View>
     );
   }
@@ -104,5 +84,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333333',
     marginBottom: 5,
+  },
+  uploadAvatar: {
+    width: 300,
+    height: 300
   },
 });
